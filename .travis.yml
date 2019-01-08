@@ -1,36 +1,39 @@
 language: java
 jdk: oraclejdk8
-
-# Define the services to use
 services:
-  - docker
-
+- docker
 before_install:
-  - sudo service mysql stop
-  - docker pull takimatraining/devops-training-db
-  - docker run -d -p 127.0.0.1:3306:3306 takimatraining/devops-training-db
-
-# Run Unit Test and Integration Tests
+- sudo service mysql stop
+- docker pull takimatraining/devops-training-db
+- docker run -d -p 127.0.0.1:3306:3306 takimatraining/devops-training-db
 script:
-  - mvn verify
-
-# 改进：由于每次运行build的时候，运行环境为全新
-# 所以Maven每次都要重复下载很多依赖包，为避免此情况，可以用缓存来解决
-# Cache the .m2 folder to prevent redownloading dependencies on each build
+- |-
+  mvn clean install sonar:sonar \
+  -Dsonar.projectKey=Simon1356_sample-application-students \
+  -Dsonar.organization=simon1356-github \
+  -Dsonar.host.url=https://sonarcloud.io \
+  -Dsonar.login=66f5d5cfd8494e36fb5dd30432008f5d97533062
 cache:
   directories:
   - "$HOME/.m2/repository"
-
 env:
   global:
-    - secure: "RBQMbyZxErykb5VavWyGTQGelAMdSoTkN5AQvdsBTSWqnvG3jLO/HqPHnEp/Bg+ChkpzApzB/4OhEKDvRtJS/b0Esz+rwmQrDJJF4ArJ/+AhJNDu4PC1b/o1pLSGbqXaC8s9o6bn24wmZlHs1uL0TpLvkGrNWawdT689C8gbdlvYeez+tvJ+khW6V/B4AmNHgfZRCzis+eQt270pAMNQ17SkU9ZslQDphrrGo10XXuudRBPWsz6GHo4kU3mNJovEl41mPlh46Ee8C2Q29245On03Jjyv3IIIFm33zbM0fL62lXDUOsqf21OC38F46c5x/O9Yb3cdKxlWVN63ylngI7BVfX7+eOrJ5m6a8s9/LJ9fHxEIDM87zCiDjA4H/whh+QSN0JVPL/RxEwFJ7SrL/J3HXExFiXjFWHVHJIBT39du5Mr8ESuLmXa+v1L9jDRXKC4mHkT4xdzzBymC9rdev5lg6yUDGdTPZ9/9rrCPRxjEgwsi8sey6eZUyj+Zi0+6AeSTVK3l0JGMxr05rCw4XEFFom3oU6DBVRscvwUj22LprgI4MsL3TQxO8P1U0xGfBxoVGSCZc8TS0riPHakKlb7H+S8OyyLIwGZzZvJji0AkI6pAe4+SbNvEmkGpvxsOT45jWU0YkBWt4dmaC/27EZbb5gHpdauMAlGYGvmIDEQ="
+  - secure: RBQMbyZxErykb5VavWyGTQGelAMdSoTkN5AQvdsBTSWqnvG3jLO/HqPHnEp/Bg+ChkpzApzB/4OhEKDvRtJS/b0Esz+rwmQrDJJF4ArJ/+AhJNDu4PC1b/o1pLSGbqXaC8s9o6bn24wmZlHs1uL0TpLvkGrNWawdT689C8gbdlvYeez+tvJ+khW6V/B4AmNHgfZRCzis+eQt270pAMNQ17SkU9ZslQDphrrGo10XXuudRBPWsz6GHo4kU3mNJovEl41mPlh46Ee8C2Q29245On03Jjyv3IIIFm33zbM0fL62lXDUOsqf21OC38F46c5x/O9Yb3cdKxlWVN63ylngI7BVfX7+eOrJ5m6a8s9/LJ9fHxEIDM87zCiDjA4H/whh+QSN0JVPL/RxEwFJ7SrL/J3HXExFiXjFWHVHJIBT39du5Mr8ESuLmXa+v1L9jDRXKC4mHkT4xdzzBymC9rdev5lg6yUDGdTPZ9/9rrCPRxjEgwsi8sey6eZUyj+Zi0+6AeSTVK3l0JGMxr05rCw4XEFFom3oU6DBVRscvwUj22LprgI4MsL3TQxO8P1U0xGfBxoVGSCZc8TS0riPHakKlb7H+S8OyyLIwGZzZvJji0AkI6pAe4+SbNvEmkGpvxsOT45jWU0YkBWt4dmaC/27EZbb5gHpdauMAlGYGvmIDEQ=
+  - secure: UqG4XlhTix0o1D+gyc/4dCykb727FGyS8Yqi1Kh/o7/cG/Ac+I0JRo3Mksnzs0ELjk3oWtl4ssieOlxere0OV3o0yXv+wDydllLmtjUNOgTXs4srwUapm6qNO/sCnSNsEuTQJQzEotC3sYlAFXUXR5duNPOJGQgQgVoXBVJv4D5FEj/rg4eiOSgIFyAFfCZTbhH4e34XjevlMa64J/YlQTfefXm6UuPzy7o+bZE+5IKdTbpPUD/EbzmR7gknQIoTsAoLv8YluLAO/vaIC5OLMaInFhAR4JYqeFsjodTUiMP1ra9TsO0sAFucg12yFPcpXGOEwIQkLbyi515O3VNBQWXXU3USnl+3yooMKz8U/wg24BwtF/KtS3K3yC0EPyIAcc09n/iLw4I1BFvZDzpEQWdRxPEp5vDQBNV5tMt7ZUe5+twZjVWAiZK70he8ub3YxgH5mlk3CVTdgE+9JKFNugHFiQcywpE1qwdWJRZym84PdKGAMoLbbzFlR5AXwQB2bjZthTR+OJPSOERtfUZZaW6cTpfLqUDj2u+xZ8lS2ADM+4IhDzFvFFlcvi9ONRcfTZ3bLOIIbIBaPzeajMdgEf68RxMhhcRuj17+1NcaiuNJyYak12o5xcGhtq3Ygg3nobu5O22ViRIXz0vBvCy8NNhvALAigpAMFG6zDvy8tF0=
+  - secure: loVjsafZ1BLZBpTZj3iTtDiyL1XzOm6+EKIy1HUbN+n1AvR5iGUJu4m3WKYE5YjQ3yKekuVUg4zF7TfysUTxLyiVboWiUPPs8SIaGAV5Umj9kllvSAQc7RmHzjCEdwC9+6FzlAqliCpb55r+cxDJ8QeumloVkl9JSunQJgjD+sx9JFIYqKE4JBvy/Tfv1QpVzrIUHLB2XngnC7k9YJKHhYOpx1SQpNIHC22A983WCvlSroDKBqijwUwXf5skOOIw1OJLGViM+frwlewU8KzyY6LADYSNwwlgn9PrXItPY8aJj5QnTvgaAanJdwlX9H7L0LK96AEThiiwHhA7NAnKiV+AZwld8ItOm9MT0wz+4rUU/PpNu+akXFtHife7yVHqIYkG8yvBvdzGKdnBOatBeqGfn/cIAHN3AKjgDadSe6n1JYcccUYENtPn64SDdKPW3KBSXYdTvdIrFzFiqsFxpxqRMDwcRlXOCfe0C3aOWVNPLginWoOgCSQTV1nS8F6tejgLexyqlmEDax7WW4lIvEN5uDojWnBAQAWCarBfzA3C0liRm4uLzHQPM2Knat4nXpXJPERZIbuLH8kKhc6ek1sYMM3ywXko+ZrzFGlFeSCseFMDXoWbRTgu8HmrLIKyR8HCYkbZw1E7or+CGJzQhxVXsa+oe3h+sFIwduQMItc=
 
-# The pipe (|) is useful to create multiline scripts
-
+# Build an image containing the .jar and push it to the Docker Hub
 script:
-  - |
-    mvn clean install sonar:sonar \
-    -Dsonar.projectKey=Simon1356_sample-application-students \
-    -Dsonar.organization=simon1356-github \
-    -Dsonar.host.url=https://sonarcloud.io \
-    -Dsonar.login=66f5d5cfd8494e36fb5dd30432008f5d97533062
+
+  # Login to Docker hub
+  - docker login -u $DOCKER_USER -p $DOCKER_PASS
+  # Tag text according to the branch
+  - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH; fi`
+  # Image name
+  - export IMAGE_NAME=takimatraining/sample-application
+  # Build the image (see Dockerfile) and tag it with the commit ID
+  - docker build -t $IMAGE_NAME:$TRAVIS_COMMIT .
+  # Retag the image with the previously choosen tag
+  - docker tag $IMAGE_NAME:$TRAVIS_COMMIT $IMAGE_NAME:$TAG
+  # Push the tagged image to Docker Hub
+  - docker push $IMAGE_NAME:$TAG
